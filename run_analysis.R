@@ -1,0 +1,1 @@
+pm0 pm0<- read.table("./dataset/airData1999.txt.gz", comment.char = "#", header = FALSE, sep = "|",na.strings = "")
