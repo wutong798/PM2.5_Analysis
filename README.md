@@ -69,6 +69,8 @@ dx1 <- data.frame(year = 2012, value = x1)
 dx0x1 <- rbind(dx0,dx1)
 ggplot2(dx0x1,aes(x=year,y=value,fill=year))+geom_boxplot()
 ```
+
+![](./images/Rplot05.png)
 除了看出2012年pm2.5分布比较分散以外，似乎看不出什么别的来。由于数值range比较大，可以试试用log函数处理一下在画图
 ```R
 ggplot2(dx0x1,aes(x=year,y=log(value),fill=year))+geom_boxplot()
