@@ -153,7 +153,7 @@ sapply(split(cnt1, cnt1$county.site), nrow)
     g <- ggplot(dfNY, aes(dates, value))
     g + geom_point() + facet_wrap(~year, scales = "free") +geom_quantile(formula = y ~y ,quantiles = 0.5) + ylim(0,45)
 ```
-![](./images/Rplot08.png)
+![](./images/Rplot09.png)
  
  
  通过对比我们可以发现在纽约，2012年的pm2.5值应该是要比1999年低的。
@@ -183,7 +183,7 @@ sapply(split(cnt1, cnt1$county.site), nrow)
     df < rbind(d00,d11)
     ggplot(df, aes(year,mean))+geom_point()+geom_segment(aes(x= "year1999",y= mrg[,2],xend = "year2012",yend=mrg[,3]),data = mrg)
 ```
-![](./images/Rplot09.png)
+![](./images/Rplot08.png)
 如图所示，大多数地区的pm2.5数值都是呈下降趋势。少数地区出现上升。
 ```R    
 mrg[mrg$mean.x < mrg$mean.y,]
