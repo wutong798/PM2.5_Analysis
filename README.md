@@ -1,6 +1,6 @@
 ﻿# PM2.5_Analysis
 
-读取压缩数据
+首先，读取压缩数据
 
 ```r
 pm0 <- read.table("./dataset/airData1999.txt.gz", comment.char = "#", header = FALSE, sep = "|",na.strings = "")
@@ -8,7 +8,7 @@ pm1 <- read.table("./dataset/airData2012.txt.gz", comment.char = "#", header = F
 pm1 <- readLines("./dataset/header.txt.gz", 1)
 ```
 
-修改数据列名
+整理数据，修改列名
 ```r
 cnames <- strsplit(cnames, "|", fixed = TRUE)
 wcol <- c(3,4,5,11,13)
@@ -16,7 +16,7 @@ names(pm0) <- make.names(cnames[[1]][wcol])
 names(pm1) <- make.names(cnames[[1]][wcol])
 ```
 
-现在再来看一下我们的数据
+再来看一下数据
 
 ```r
 head(pm0)
@@ -48,7 +48,7 @@ mean(is.na(x1))
 ##[1] 0.05607125
 ```
 我们注意到1999年pm2.5记录缺失量为11%，而2012年pm2.5缺失量为5.6%。可能的原因是当时很多检测点还没有普及pm2.5监测。
-我们分别总结一下这两年的pm数据
+我们分别总结一下这两年的pm数据。
 
 ```R
 summary(x0)
@@ -62,7 +62,7 @@ summary(x1)
 ## -10.00    4.00    7.63    9.14   12.00  909.00   73133 
 ```
 从均值和中间值看2012年pm2.5似乎已经有了明显的好转，但是最小值为-10，最大值也达到了900+。数据似乎有问题。
-先画个箱线图看看
+先画个箱线图看看。
 ```R
 dx0 <- data.frame(year = 1999, value = x0)
 dx1 <- data.frame(year = 2012, value = x1)
@@ -71,16 +71,17 @@ ggplot2(dx0x1,aes(x=year,y=value,fill=year))+geom_boxplot()
 ```
 
 ![](./images/Rplot05.png)
-除了看出2012年pm2.5分布比较分散以外，似乎看不出什么别的来。由于数值range比较大，可以试试用log函数处理一下在画图
+除了看出2012年pm2.5分布比较分散以外，似乎看不出什么别的来。由于数值range比较大，可以试试用log函数处理一下再画图。
 ```R
 ggplot2(dx0x1,aes(x=year,y=log(value),fill=year))+geom_boxplot()
 ```
+![](./images/Rplot06.png)
 从这张图似乎可以获得一些信息：
 1. warning信息告诉我们存在小于0的数值（小于0的数值进行log会产生NaN）
 4. 箱线图可以看出2012pm2.5的中值确实比1999pm2.5中值要低
 
 
-如果负数值在后面的分析中保留，肯定会影响我们最终的分析结果，因此有理由对负数值进一步研究
+如果负数值在后面的分析中保留，肯定会影响我们最终的分析结果，因此有理由对负数值进一步研究。
 ```R
 negative <- x1 <0
 mean(negative, na.rm = TRUE) 
@@ -88,8 +89,7 @@ mean(negative, na.rm = TRUE)
 ```R
 ##[1] 0.0215034
 ```
-负数值只占总数的2%。
-根据时间对负值进行分析
+负数值只占总数的2%。根据时间对负值进行分析。
 ```R
 dates <- pm1$Date
 dates <-substr(dates, 5,6)
@@ -97,8 +97,8 @@ mn <- dates[negative]
 mn <- mn[!is.na(mn)]
 qplot(mn)
 ```
+![](./images/Rplot07.png)
 暂且只能理解为设备误差，负数值在后面的分析中会忽略掉。
-
 为了排除地理因素对pm2.5数值差异的影响，我们选择一个州来分析pm2.5数值差异。
 ```R
 site0 <- unique(subset(pm0, State.Code == 36, c(County.Code, Site.ID)))
@@ -153,7 +153,7 @@ sapply(split(cnt1, cnt1$county.site), nrow)
     g <- ggplot(dfNY, aes(dates, value))
     g + geom_point() + facet_wrap(~year, scales = "free") +geom_quantile(formula = y ~y ,quantiles = 0.5) + ylim(0,45)
 ```
-
+![](./images/Rplot08.png)
  
  
  通过对比我们可以发现在纽约，2012年的pm2.5值应该是要比1999年低的。
@@ -183,7 +183,7 @@ sapply(split(cnt1, cnt1$county.site), nrow)
     df < rbind(d00,d11)
     ggplot(df, aes(year,mean))+geom_point()+geom_segment(aes(x= "year1999",y= mrg[,2],xend = "year2012",yend=mrg[,3]),data = mrg)
 ```
-
+![](./images/Rplot09.png)
 如图所示，大多数地区的pm2.5数值都是呈下降趋势。少数地区出现上升。
 ```R    
 mrg[mrg$mean.x < mrg$mean.y,]
