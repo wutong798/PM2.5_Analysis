@@ -1,6 +1,7 @@
 ﻿# PM2.5_Analysis
 
-#首先，读取压缩数据
+首先，读取压缩数据
+-----------
 
 ```r
 pm0 <- read.table("./dataset/airData1999.txt.gz", comment.char = "#", header = FALSE, sep = "|",na.strings = "")
